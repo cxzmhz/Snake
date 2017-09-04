@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+  <meta charset='UTF-8'>
+  <title>Document</title>
+  <script src="js/snake.js"></script>
+  <script src="js/food.js"></script>
+  <script src="js/body.js"></script>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-content: center;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id='canvas' width='400' height='400'></canvas>
+</body>
+<script>
+  var canvas = document.getElementById('canvas');
+  var context = canvas.getContext('2d');
+  var flag = false;
+  var timeId = null;
+
+  var snakeArr = [];
+  var food;
+  function createSnake() {
+    var info = {
+      x: 180,
+      y: 180,
+      w: 20,
+      h: 20
+    }
+    var snake = new Snake(info);
+    snakeArr.push(snake);
+
+    var info = {
+      w: 20,
+      h: 20
+    }
+    food = new Food(info);
+  }
+  createSnake();
+  snakeArr[0].draw();
+  food.draw();
+  var lastX;
+  var lastY;
+  function drawAll() {
+    lastX = snakeArr[snakeArr.length - 1].x;
+    lastY = snakeArr[snakeArr.length - 1].y;
+    for (var i = snakeArr.length - 1; i > 0; i--) {
+      snakeArr[i].x = snakeArr[i - 1].x;
+      snakeArr[i].y = snakeArr[i - 1].y;
+    }
+    snakeArr.forEach(function (snake, i) {
+      snake.draw();
+    })
+    food.draw();
+  }
+  function action() {
+    drawAll();
+    if (snakeArr[0].x == food.x && snakeArr[0].y == food.y) {
+      food.changeCoord();
+      var info = {
+        x: lastX,
+        y: lastY,
+        w: 20,
+        h: 20
+      }
+      var body = new Body(info);
+      // body.draw();
+      snakeArr.push(body);
+      // drawAll();
+    }
+    if (flag) {
+      clearInterval(timeId);
+    }
+  }
+  timeId = setInterval(action, 100);
+
+</script>
+
+</html>
